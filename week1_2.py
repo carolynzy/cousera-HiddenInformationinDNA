@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
-seq=open('dataset_2_10.txt').read()
+file=open('dataset_2_10.txt')
+seq=file.read()
 k=int(input('Input the k here: '))
 
 i=0
@@ -9,7 +10,7 @@ unique=set()
 output={}
 value=set()
 for c in seq:
-	if i+k<len(seq)-1:
+	if i+k<=len(seq)-1:
 		pattern=seq[i:i+k]
 		list.append(pattern)
 	if i+k==len(seq):
@@ -28,3 +29,4 @@ max=max(value)
 for item in output:
 	if output[item]==max:
 		print(item)
+file.close()
