@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# find the frequence of a K-mer
+
 
 import os
 
