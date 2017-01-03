@@ -2,7 +2,7 @@
 #find the position of a certain pattern
 file=open('Vibrio_cholerae.txt')
 seq=file.read()
-pattern=raw_input('Enter your pattern here: ')
+pattern=input('Enter your pattern here: ')
 
 i=0
 len1=len(seq)
