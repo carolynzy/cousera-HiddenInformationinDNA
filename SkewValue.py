@@ -14,6 +14,6 @@ for c in seq:
 	list+=[value]
 
 min=min(list)
-min_index=[i for i, x in enumerate(list) if x==min]
-print(min_index)
+min_index=[str(i) for i, x in enumerate(list) if x==min]
+print(' '.join(min_index))
 file.close()
