@@ -1,31 +1,19 @@
 #!/usr/bin/python
-import itertools
-
-file=open('test.txt')
-sequence=file.read()
-d=int(raw_input('Enter d here: '))
-k=int(raw_input('Enter k here: '))
-
-i=0
-list_all=[]
-unique=set()
-length=len(sequence)
-neighbor=set()
-for c in sequence:
-	if i+k<=length-1:
-		pattern=sequence[i:i+k]
-		list_all.append(pattern)
-	if i+k==len(sequence):
-		pattern=sequence[i:]
-		list_all.append(pattern)
-import itertools
 import sys
+
 input = sys.stdin.read()
 tokens = input.split()
 sequence=tokens[0]
 k=int(tokens[1])
 d=int(tokens[2])
 
+
+#file=open('test.txt')
+#sequence=file.read()
+#sequence=input('Sequence: ')
+#k, d=input('Enter k, d here: ').split()
+#k=int(k)
+#d=int(d)
 
 #find all the patterns in the sequence
 pattern_all=[]
@@ -61,8 +49,7 @@ for i in range(0, 4**k):
         count+=1
         K-=1
     array[''.join(list)]=i
-
-
+ 
 
 # find d-neighbor of k-mers in the sequence
 kmers=array.keys()
@@ -75,41 +62,48 @@ for pattern in unique:
                 dis+=1
         if dis <=d:
             neighbor.add(kmer)
+            
+# create the reverse sequence of each pattern in neighbor
+dict={'A':'T', 'T':'A', 'G':'C', 'C':'G'}
+pair={}
+for pattern in neighbor:
+    pattern_r=[]
+    for i in range(k-1,-1,-1):
+        b=pattern[i]
+        c=dict[b]
+        pattern_r.append(c)
+    pair[pattern]=''.join(pattern_r)
+    pair[''.join(pattern_r)]=pattern
+neighbor_r=set(pair.values())
+for i in neighbor_r:
+	neighbor.add(i)
 
-
-# find frequence of d-neighbors in sequence
+# find the frequence of each pattern in neighbor + frequence of reverse pattern
 count_all={}
-for match_d in neighbor:
-    count=0
-    for item in pattern_all:
-        dis=0
-        for i in range(0,k):
-            if match_d[i]!= item[i]:
-                dis+=1
-        if dis<=d:
-            count+=1
-    count_all[match_d]=count
-if count_all:
-	count_max=max(count_all.values())
+for pattern in neighbor:
+	count=0
+	count_r=0
+	for item in pattern_all:
+		dis=0
+		for i in range(0,k):
+			if pattern[i]!= item[i]:
+				dis+=1
+		if dis<=d:
+			count+=1
+	for item in pattern_all:
+		dis=0
+		for i in range(0,k):
+			if pair[pattern][i]!= item[i]:
+				dis+=1
+		if dis<=d:
+			count_r+=1
+	count_all[pattern]=count+count_r
+if not count_all:
+	count_max='none'
 else:
-	count_max='NULL'
+	count_max=max(count_all.values())
 pattern_max=[]
-for match_d in neighbor:
-    if count_all[match_d]==count_max:
-        pattern_max+=[match_d]
+for pattern in neighbor:
+	if count_all[pattern]==count_max:
+		pattern_max.append(pattern)	
 print(' '.join(pattern_max))
-
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-	
-		
-	
