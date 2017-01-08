@@ -18,59 +18,86 @@ for c in sequence:
 	if i+k==len(sequence):
 		pattern=sequence[i:]
 		list_all.append(pattern)
-	i+=1
-for pattern in list_all:
-	unique.add(pattern)
-print(unique)
+import itertools
+import sys
+input = sys.stdin.read()
+tokens = input.split()
+sequence=tokens[0]
+k=int(tokens[1])
+d=int(tokens[2])
 
+
+#find all the patterns in the sequence
+pattern_all=[]
+unique=set()
+length=len(sequence)
+for i in range(0,length-k+1):
+	pattern=sequence[i:i+k]
+	pattern_all.append(pattern)
+for pattern in pattern_all:
+	unique.add(pattern)
+	
+	
+# create all Kmer array
+array={}
+dict={0:'A',1:'C', 2:'G',3:'T'}
+for i in range(0, 4**k):
+    count=0
+    I=i
+    K=k
+    list=['A']*k
+    while K-1>=0:
+        if I >= 4**(K-1)*3:
+            list[count]='T'
+            I-=4**(K-1)*3
+        elif 4**(K-1)*2<=I<4**(K-1)*3:
+            list[count]='G'
+            I-=4**(K-1)*2
+        elif 4**(K-1)<=I<4**(K-1)*2:
+            list[count]='C'
+            I-=4**(K-1)
+        elif 0<=I<4:
+            list[-1]=dict[I]
+        count+=1
+        K-=1
+    array[''.join(list)]=i
+
+
+
+# find d-neighbor of k-mers in the sequence
+kmers=array.keys()
+neighbor=set()
 for pattern in unique:
-	if d==0:
-		print(pattern)
-	else:
-		length=len(pattern)
-		pos=[i for i in range(0,length)]
-		letter=['A','C','G','T']
-		if length<d:
-			print('Error! d should not be greater than the length of the pattern')
-		else:
-			d0=1
-			while d0<=d:
-				combination_iter=itertools.combinations(pos,d0)
-				permutation_iter=itertools.permutations(letter,d0)
-				combination=[]
-				permutation=[]
-				for com in combination_iter:
-					combination+=[com]
-				for per in permutation_iter:
-					permutation+=[per]
-				print(combination)
-				print(permutation)
-				for item in combination:
-					str_list=[i for i in pattern]
-					for change in permutation:
-						for i in change:
-							str_list[item[change.index(i)]]=i
-						neighbor.add(''.join(str_list))
-				d0+=1
-print(neighbor)
+    for kmer in kmers:
+        dis=0
+        for i in range(0,k):
+            if pattern[i]!= kmer[i]:
+                dis+=1
+        if dis <=d:
+            neighbor.add(kmer)
+
+
+# find frequence of d-neighbors in sequence
 count_all={}
 for match_d in neighbor:
-	len_match=len(match_d)
-	count=0
-	for item in list_all:
-		dis=0
-		for i in range(0,len_match):
-			if match_d[i]!= item[i]:
-				dis+=1
-		if dis<=d:
-			count+=1
-	count_all[match_d]=count
-max=max(count_all.values())
-print(max)
+    count=0
+    for item in pattern_all:
+        dis=0
+        for i in range(0,k):
+            if match_d[i]!= item[i]:
+                dis+=1
+        if dis<=d:
+            count+=1
+    count_all[match_d]=count
+if count_all:
+	count_max=max(count_all.values())
+else:
+	count_max='NULL'
+pattern_max=[]
 for match_d in neighbor:
-	if count_all[match_d]==max:
-		print(match_d)	
-file.close()		
+    if count_all[match_d]==count_max:
+        pattern_max+=[match_d]
+print(' '.join(pattern_max))
 
 		
 		
